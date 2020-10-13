@@ -30,6 +30,32 @@ function App() {
 
   const agregar = async(e) => {
     e.preventDefault()
+
+    if(!tarea.trim()){
+      console.log('esta vacio')
+      return
+    }
+
+    try {
+
+      const db = firebase.firestore()
+      const nuevaTarea = {
+        name: tarea,
+        fecha: Date.now()
+      }
+
+      const data = await db.collection('tareas').add(nuevaTarea)
+
+      setTareas([
+        ...tareas,
+        {...nuevaTarea, id: data.id}
+      ])
+
+      setTarea('')
+
+    } catch (error) {
+
+    }
     console.log(tarea)
   }
 
@@ -40,7 +66,9 @@ function App() {
           <ul className="list-group">
             {
               tareas.map(item => (
-              <li className="list-group-item" key={item.id}>{item.name}</li>
+              <li className="list-group-item" key={item.id}>
+                {item.name}
+              </li>
               ))
             }
           </ul>
