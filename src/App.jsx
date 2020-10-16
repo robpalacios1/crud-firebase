@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {firebase} from './firebase'
 
 
@@ -6,6 +6,8 @@ function App() {
 
   const [tareas, setTareas] = useState([])
   const [tarea, setTarea] = useState("")
+  const [modoEdicion, setModoEdicion] = useState(false)
+  const [id, setId] = useState("")
 
   useEffect(() => {
 
@@ -72,8 +74,18 @@ function App() {
     }
   }
 
+  const activarEdicion = (item) => {
+    setModoEdicion(true)
+    setTarea(item.name)
+    setId(item.id)
+  }
+
+  const editar = async (e) => {
+    e.preventDefault()
+  }
+
   return (
-    <>
+    <Fragment>
     <h1 className="text-center mt-3">CRUD-Firebase</h1>
     <div className="container mt-3">
       <div className="row">
@@ -91,6 +103,7 @@ function App() {
                 </button>
                 <button
                   className="btn btn-warning btn-sm float-right mr-3"
+                  onClick={() => activarEdicion(item)}
                 >
                   Editar
                 </button>
@@ -100,8 +113,12 @@ function App() {
           </ul>
         </div>
         <div className="col-md-6">
-          <h3>Formulario</h3>
-          <form onSubmit={agregar}>
+          <h3>
+            {
+              modoEdicion ? "Editar Tarea" : "Agregar Tarea"
+            }
+          </h3>
+          <form onSubmit={modoEdicion ? "editar" : "agregar"}>
             <input
               type="text"
               placeholder="Ingrese tarea"
@@ -110,16 +127,21 @@ function App() {
               value={tarea}
             />
             <button
-              className="btn btn-dark btn-block"
+              className=
+              {
+                modoEdicion ? "btn btn-warning btn-block" : "btn btn-dark btn-block"
+              }
               type="submit"
             >
-              Agregar
+              {
+                modoEdicion ? "Editar" : "Agregar"
+              }
             </button>
           </form>
         </div>
       </div>
     </div>
-    </>
+    </Fragment>
   );
 }
 
