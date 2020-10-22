@@ -17,20 +17,18 @@ function App() {
 
         const db = firebase.firestore()
         const data = await db.collection("tareas").get()
-        //console.log(data.docs)
         const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        //console.log(arrayData)
         setTareas(arrayData)
 
       }catch (error) {
-
+        console.log(error)
       }
 
     }
     obtenerDatos()
   }, [])
 
-  const agregar = async(e) => {
+  const agregar = async (e) => {
     e.preventDefault()
 
     if(!tarea.trim()){
@@ -56,9 +54,8 @@ function App() {
       setTarea('')
 
     } catch (error) {
-
+      console.log(tarea)
     }
-    console.log(tarea)
   }
 
   const eliminar = async (id) => {
@@ -82,6 +79,26 @@ function App() {
 
   const editar = async (e) => {
     e.preventDefault()
+    if(!tarea.trim()){
+      console.log('vacio')
+      return
+    }
+    try {
+      const db = firebase.firestore()
+      await db.collection('tareas').doc(id).update({
+        name: tarea
+      })
+      const arrayEditado = tareas.map(item => (
+        item.id === id ? {id: item.id, fecha: item.fecha, name: tarea} : item
+      ))
+      setTareas(arrayEditado)
+      setModoEdicion(false)
+      setTarea('')
+      setId('')
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
